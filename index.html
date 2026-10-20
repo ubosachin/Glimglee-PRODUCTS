@@ -1,0 +1,1391 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>E-Commerce Product Catalogue & Documentation Portal</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-main: #0B0F17;
+      --bg-card: #131A29;
+      --bg-card-hover: #1A2438;
+      --bg-modal: #0F172A;
+      --border: rgba(255, 255, 255, 0.08);
+      --border-accent: rgba(99, 102, 241, 0.3);
+      --text-main: #F8FAFC;
+      --text-muted: #94A3B8;
+      --primary: #4F46E5;
+      --primary-hover: #4338CA;
+      --accent-gold: #F59E0B;
+      --accent-cyan: #06B6D4;
+      --accent-green: #10B981;
+      --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.25);
+      --shadow-lg: 0 12px 36px rgba(0, 0, 0, 0.45);
+      --radius-sm: 8px;
+      --radius-md: 12px;
+      --radius-lg: 18px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+    }
+
+    body {
+      background: radial-gradient(circle at 10% 10%, #151c2e 0%, #0B0F17 60%);
+      color: var(--text-main);
+      min-height: 100vh;
+      overflow-x: hidden;
+      padding-bottom: 60px;
+    }
+
+    /* Header */
+    header {
+      background: rgba(15, 23, 42, 0.85);
+      backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--border);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      padding: 18px 32px;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+
+    .brand-title {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .brand-title h1 {
+      font-family: 'Outfit', sans-serif;
+      font-size: 22px;
+      font-weight: 700;
+      background: linear-gradient(135deg, #A5B4FC, #FFFFFF, #F59E0B);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+      letter-spacing: -0.5px;
+    }
+
+    .badge-count {
+      background: rgba(79, 70, 229, 0.25);
+      color: #A5B4FC;
+      border: 1px solid rgba(79, 70, 229, 0.4);
+      padding: 4px 10px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    .search-box {
+      position: relative;
+      flex: 1;
+      max-width: 440px;
+      min-width: 260px;
+    }
+
+    .search-box input {
+      width: 100%;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      padding: 10px 18px 10px 42px;
+      color: #FFF;
+      font-size: 14px;
+      outline: none;
+      transition: all 0.2s ease;
+    }
+
+    .search-box input:focus {
+      background: rgba(255, 255, 255, 0.08);
+      border-color: var(--accent-cyan);
+      box-shadow: 0 0 0 3px rgba(6, 182, 212, 0.15);
+    }
+
+    .search-icon {
+      position: absolute;
+      left: 16px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 14px;
+      color: var(--text-muted);
+    }
+
+    /* Sub-nav / Filters */
+    .filter-bar {
+      padding: 16px 32px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+    .filter-bar::-webkit-scrollbar { display: none; }
+
+    .filter-pill {
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid var(--border);
+      color: var(--text-muted);
+      padding: 8px 16px;
+      border-radius: 20px;
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: all 0.2s ease;
+    }
+
+    .filter-pill:hover {
+      background: rgba(255, 255, 255, 0.09);
+      color: #FFF;
+    }
+
+    .filter-pill.active {
+      background: var(--primary);
+      border-color: var(--primary);
+      color: #FFF;
+      box-shadow: 0 4px 14px rgba(79, 70, 229, 0.35);
+    }
+
+    /* Grid Layout */
+    .container {
+      max-width: 1440px;
+      margin: 0 auto;
+      padding: 12px 32px;
+    }
+
+    .product-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
+      gap: 22px;
+    }
+
+    .product-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+      position: relative;
+    }
+
+    .product-card:hover {
+      transform: translateY(-4px);
+      border-color: var(--border-accent);
+      box-shadow: var(--shadow-lg);
+    }
+
+    .card-img-wrap {
+      position: relative;
+      width: 100%;
+      height: 270px;
+      background: #060911;
+      overflow: hidden;
+      cursor: pointer;
+    }
+
+    .card-img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.4s ease;
+    }
+
+    .product-card:hover .card-img {
+      transform: scale(1.05);
+    }
+
+    .card-badges {
+      position: absolute;
+      top: 12px;
+      left: 12px;
+      display: flex;
+      gap: 6px;
+      z-index: 2;
+    }
+
+    .badge-sku {
+      background: rgba(15, 23, 42, 0.85);
+      backdrop-filter: blur(8px);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      color: #FEF08A;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 4px 8px;
+      border-radius: 6px;
+      letter-spacing: 0.5px;
+    }
+
+    .badge-gst {
+      background: rgba(16, 185, 129, 0.2);
+      border: 1px solid rgba(16, 185, 129, 0.4);
+      color: #6EE7B7;
+      font-size: 11px;
+      font-weight: 600;
+      padding: 4px 8px;
+      border-radius: 6px;
+    }
+
+    .badge-photos {
+      position: absolute;
+      bottom: 12px;
+      right: 12px;
+      background: rgba(0, 0, 0, 0.7);
+      backdrop-filter: blur(6px);
+      color: #FFF;
+      font-size: 11px;
+      padding: 3px 8px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .card-content {
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+    }
+
+    .card-category {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--accent-cyan);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 6px;
+    }
+
+    .card-title {
+      font-size: 14px;
+      font-weight: 600;
+      line-height: 1.4;
+      color: var(--text-main);
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+      margin-bottom: 8px;
+      height: 40px;
+    }
+
+    .card-tax-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 12px;
+      color: var(--text-muted);
+      padding: 8px 0;
+      border-top: 1px solid rgba(255, 255, 255, 0.05);
+      margin-top: auto;
+    }
+
+    .card-tax-row span b {
+      color: #E2E8F0;
+    }
+
+    .card-actions {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 8px;
+      margin-top: 10px;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      padding: 8px 14px;
+      border-radius: var(--radius-sm);
+      font-size: 12.5px;
+      font-weight: 600;
+      cursor: pointer;
+      border: none;
+      transition: all 0.2s ease;
+      text-decoration: none;
+    }
+
+    .btn-primary {
+      background: var(--primary);
+      color: #FFF;
+    }
+    .btn-primary:hover {
+      background: var(--primary-hover);
+    }
+
+    .btn-secondary {
+      background: rgba(255, 255, 255, 0.06);
+      color: var(--text-main);
+      border: 1px solid var(--border);
+    }
+    .btn-secondary:hover {
+      background: rgba(255, 255, 255, 0.12);
+      border-color: rgba(255, 255, 255, 0.2);
+    }
+
+    .btn-copy {
+      background: rgba(245, 158, 11, 0.15);
+      border: 1px solid rgba(245, 158, 11, 0.35);
+      color: #FCD34D;
+    }
+    .btn-copy:hover {
+      background: rgba(245, 158, 11, 0.25);
+    }
+
+    /* Modal Backdrop */
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(4, 7, 13, 0.85);
+      backdrop-filter: blur(14px);
+      z-index: 1000;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .modal-backdrop.active {
+      display: flex;
+    }
+
+    .modal-box {
+      background: var(--bg-modal);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: var(--radius-lg);
+      width: 100%;
+      max-width: 1180px;
+      max-height: 90vh;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 24px 60px rgba(0, 0, 0, 0.65);
+      overflow: hidden;
+      animation: modalSlideUp 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    @keyframes modalSlideUp {
+      from { transform: translateY(20px) scale(0.98); opacity: 0; }
+      to { transform: translateY(0) scale(1); opacity: 1; }
+    }
+
+    .modal-header {
+      padding: 18px 24px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: rgba(255, 255, 255, 0.02);
+    }
+
+    .modal-header-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .modal-header h2 {
+      font-family: 'Outfit', sans-serif;
+      font-size: 18px;
+      color: #FFF;
+      font-weight: 700;
+    }
+
+    .close-btn {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--border);
+      color: var(--text-muted);
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      font-size: 18px;
+      transition: all 0.2s;
+    }
+    .close-btn:hover {
+      background: rgba(239, 68, 68, 0.2);
+      color: #EF4444;
+      border-color: rgba(239, 68, 68, 0.4);
+    }
+
+    .modal-body {
+      display: grid;
+      grid-template-columns: 460px 1fr;
+      overflow-y: auto;
+      flex: 1;
+    }
+
+    /* Gallery Panel */
+    .gallery-panel {
+      background: #080C14;
+      padding: 24px;
+      border-right: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .main-img-box {
+      width: 100%;
+      height: 400px;
+      border-radius: var(--radius-md);
+      overflow: hidden;
+      background: #000;
+      position: relative;
+      border: 1px solid var(--border);
+    }
+
+    .main-img-box img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      cursor: zoom-in;
+    }
+
+    .thumbnails-strip {
+      display: flex;
+      gap: 10px;
+      overflow-x: auto;
+      padding-bottom: 6px;
+    }
+
+    .thumb-btn {
+      width: 68px;
+      height: 68px;
+      border-radius: 8px;
+      overflow: hidden;
+      border: 2px solid transparent;
+      cursor: pointer;
+      background: #000;
+      flex-shrink: 0;
+      opacity: 0.6;
+      transition: all 0.2s;
+    }
+
+    .thumb-btn.active, .thumb-btn:hover {
+      border-color: var(--primary);
+      opacity: 1;
+      transform: scale(1.05);
+    }
+
+    .thumb-btn img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    /* Details Panel */
+    .details-panel {
+      padding: 24px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .detail-section {
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 16px;
+    }
+
+    .section-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 12px;
+    }
+
+    .section-header h4 {
+      font-size: 13px;
+      text-transform: uppercase;
+      letter-spacing: 0.6px;
+      color: #94A3B8;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .tax-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+      margin-bottom: 10px;
+    }
+
+    .tax-card {
+      background: rgba(255, 255, 255, 0.04);
+      padding: 12px;
+      border-radius: var(--radius-sm);
+      border-left: 3px solid var(--accent-cyan);
+    }
+
+    .tax-card.green {
+      border-left-color: var(--accent-green);
+    }
+
+    .tax-card .tax-label {
+      font-size: 11px;
+      color: var(--text-muted);
+      text-transform: uppercase;
+    }
+
+    .tax-card .tax-val {
+      font-size: 16px;
+      font-weight: 700;
+      color: #FFF;
+      margin-top: 2px;
+    }
+
+    .bullets-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .bullets-list li {
+      font-size: 13px;
+      line-height: 1.5;
+      color: #CBD5E1;
+      padding-left: 18px;
+      position: relative;
+    }
+
+    .bullets-list li::before {
+      content: "•";
+      color: var(--accent-gold);
+      position: absolute;
+      left: 4px;
+      font-size: 16px;
+    }
+
+    .bullets-list li b {
+      color: #FFF;
+    }
+
+    .specs-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 12.5px;
+    }
+
+    .specs-table tr {
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .specs-table td {
+      padding: 8px 10px;
+    }
+
+    .specs-table td:first-child {
+      color: var(--text-muted);
+      width: 38%;
+      font-weight: 500;
+    }
+
+    .specs-table td:last-child {
+      color: #E2E8F0;
+    }
+
+    .modal-footer {
+      padding: 16px 24px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: rgba(15, 23, 42, 0.95);
+    }
+
+    /* Toast Notification */
+    .toast {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      background: #059669;
+      color: #FFF;
+      padding: 12px 20px;
+      border-radius: var(--radius-sm);
+      font-size: 13.5px;
+      font-weight: 600;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      z-index: 2000;
+      transform: translateY(100px);
+      opacity: 0;
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .toast.show {
+      transform: translateY(0);
+      opacity: 1;
+    }
+
+    
+    /* =========================================================
+       RESPONSIVE DESIGN & ADAPTIVE LAYOUT SYSTEM
+       ========================================================= */
+
+    /* Fluid container & base touch improvements */
+    html, body {
+      -webkit-text-size-adjust: 100%;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .container {
+      max-width: 1440px;
+      margin: 0 auto;
+      padding: 16px 24px;
+    }
+
+    /* Card image responsive aspect ratio */
+    .card-img-wrap {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 1 / 1;
+      height: auto;
+      min-height: 220px;
+      max-height: 320px;
+      background: #060911;
+      overflow: hidden;
+      cursor: pointer;
+    }
+
+    /* Desktop Large (>= 1200px) */
+    @media (min-width: 1200px) {
+      .product-grid {
+        grid-template-columns: repeat(4, 1fr);
+        gap: 24px;
+      }
+    }
+
+    /* Laptops / Desktops (992px to 1199px) */
+    @media (min-width: 992px) and (max-width: 1199px) {
+      .container {
+        padding: 16px 20px;
+      }
+      .product-grid {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 20px;
+      }
+      .modal-box {
+        max-width: 960px;
+      }
+      .modal-body {
+        grid-template-columns: 380px 1fr;
+      }
+      .main-img-box {
+        height: 350px;
+      }
+    }
+
+    /* Tablets (768px to 991px) */
+    @media (min-width: 768px) and (max-width: 991px) {
+      header {
+        padding: 14px 20px;
+        gap: 12px;
+      }
+      .brand-title h1 {
+        font-size: 20px;
+      }
+      .search-box {
+        max-width: 320px;
+      }
+      .filter-bar {
+        padding: 12px 20px;
+      }
+      .container {
+        padding: 12px 18px;
+      }
+      .product-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 18px;
+      }
+      .modal-box {
+        max-width: 740px;
+      }
+      .modal-body {
+        grid-template-columns: 320px 1fr;
+      }
+      .main-img-box {
+        height: 300px;
+      }
+      .gallery-panel {
+        padding: 18px;
+      }
+      .details-panel {
+        padding: 18px;
+      }
+    }
+
+    /* Mobile Landscape & Small Tablets (576px to 767px) */
+    @media (min-width: 576px) and (max-width: 767px) {
+      header {
+        padding: 12px 16px;
+        flex-direction: column;
+        align-items: stretch;
+        gap: 10px;
+      }
+      .brand-title {
+        justify-content: space-between;
+      }
+      .search-box {
+        max-width: 100%;
+        min-width: 100%;
+      }
+      .filter-bar {
+        padding: 10px 16px;
+      }
+      .container {
+        padding: 10px 16px;
+      }
+      .product-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 14px;
+      }
+      .card-content {
+        padding: 12px;
+      }
+      .card-title {
+        font-size: 13px;
+        height: 36px;
+      }
+      .card-actions {
+        grid-template-columns: 1fr;
+      }
+      .btn {
+        padding: 7px 10px;
+        font-size: 11.5px;
+      }
+      /* Modal Stacked */
+      .modal-backdrop {
+        padding: 12px;
+        align-items: flex-end;
+      }
+      .modal-box {
+        max-height: 94vh;
+        border-radius: 16px 16px 0 0;
+      }
+      .modal-body {
+        grid-template-columns: 1fr;
+      }
+      .gallery-panel {
+        border-right: none;
+        border-bottom: 1px solid var(--border);
+        padding: 16px;
+      }
+      .main-img-box {
+        height: 280px;
+      }
+      .details-panel {
+        padding: 16px;
+      }
+      .modal-footer {
+        flex-direction: column-reverse;
+        gap: 10px;
+        padding: 12px 16px;
+      }
+      .modal-footer .btn {
+        width: 100%;
+      }
+      .toast {
+        left: 20px;
+        right: 20px;
+        bottom: 20px;
+        justify-content: center;
+      }
+    }
+
+    /* Mobile Portrait (< 576px) */
+    @media (max-width: 575px) {
+      header {
+        padding: 12px 14px;
+        flex-direction: column;
+        align-items: stretch;
+        gap: 10px;
+      }
+      .brand-title {
+        justify-content: space-between;
+        width: 100%;
+      }
+      .brand-title h1 {
+        font-size: 18px;
+      }
+      .badge-count {
+        font-size: 11px;
+        padding: 3px 8px;
+      }
+      .search-box {
+        max-width: 100%;
+        min-width: 100%;
+      }
+      .search-box input {
+        font-size: 13px;
+        padding: 9px 14px 9px 38px;
+      }
+      .filter-bar {
+        padding: 10px 14px;
+        gap: 6px;
+      }
+      .filter-pill {
+        padding: 6px 12px;
+        font-size: 12px;
+      }
+      .container {
+        padding: 8px 12px;
+      }
+      .product-grid {
+        grid-template-columns: 1fr;
+        gap: 14px;
+      }
+      .card-img-wrap {
+        aspect-ratio: 4 / 3;
+        min-height: 220px;
+      }
+      .card-content {
+        padding: 14px;
+      }
+      .card-title {
+        font-size: 13.5px;
+        height: auto;
+        max-height: 42px;
+        margin-bottom: 6px;
+      }
+      .card-tax-row {
+        font-size: 11.5px;
+        padding: 6px 0;
+      }
+      .card-actions {
+        grid-template-columns: 1fr;
+        gap: 6px;
+      }
+      .btn {
+        padding: 9px 12px;
+        font-size: 12px;
+      }
+
+      /* Modal Bottom Sheet on Mobile */
+      .modal-backdrop {
+        padding: 0;
+        align-items: flex-end;
+      }
+      .modal-box {
+        width: 100%;
+        max-height: 95vh;
+        border-radius: 20px 20px 0 0;
+        border-bottom: none;
+      }
+      .modal-header {
+        padding: 14px 16px;
+      }
+      .modal-header h2 {
+        font-size: 16px;
+      }
+      .modal-body {
+        grid-template-columns: 1fr;
+      }
+      .gallery-panel {
+        border-right: none;
+        border-bottom: 1px solid var(--border);
+        padding: 14px 16px;
+        gap: 12px;
+      }
+      .main-img-box {
+        height: 240px;
+      }
+      .thumb-btn {
+        width: 54px;
+        height: 54px;
+      }
+      .details-panel {
+        padding: 14px 16px;
+        gap: 16px;
+      }
+      .detail-section {
+        padding: 12px;
+      }
+      .section-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+      }
+      .section-header .btn-copy {
+        width: 100%;
+        padding: 6px 10px;
+        font-size: 11px;
+      }
+      .tax-grid {
+        grid-template-columns: 1fr;
+        gap: 8px;
+      }
+      .tax-card {
+        padding: 10px;
+      }
+      .tax-card .tax-val {
+        font-size: 15px;
+      }
+      .specs-table td {
+        padding: 6px 8px;
+        font-size: 11.5px;
+      }
+      .specs-table td:first-child {
+        width: 42%;
+      }
+      .modal-footer {
+        flex-direction: column-reverse;
+        gap: 8px;
+        padding: 12px 16px;
+        padding-bottom: max(16px, env(safe-area-inset-bottom));
+      }
+      .modal-footer .btn {
+        width: 100%;
+        padding: 11px 16px;
+        font-size: 13px;
+      }
+      .toast {
+        left: 14px;
+        right: 14px;
+        bottom: 14px;
+        justify-content: center;
+        text-align: center;
+        font-size: 12.5px;
+        padding: 10px 14px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Header -->
+  <header>
+    <div class="brand-title">
+      <h1>E-Commerce Product Portal</h1>
+      <span class="badge-count" id="productCountBadge">Loading...</span>
+    </div>
+
+    <div class="search-box">
+      <span class="search-icon">🔍</span>
+      <input type="text" id="searchInput" placeholder="Search by SKU (C1, ET1), Title, Stones, Material...">
+    </div>
+  </header>
+
+  <!-- Filter Pills -->
+  <div class="filter-bar">
+    <button class="filter-pill active" data-filter="all">🌟 All Products (48)</button>
+    <button class="filter-pill" data-filter="Traditional Jhumkas">🪔 Traditional Jhumkas (10)</button>
+    <button class="filter-pill" data-filter="Kundan & Chandbali">💎 Kundan & Chandbali (26)</button>
+    <button class="filter-pill" data-filter="Scented Candles">🕯️ Scented Candles (2)</button>
+    <button class="filter-pill" data-filter="Luxury Watches">⌚ Luxury Watches (2)</button>
+    <button class="filter-pill" data-filter="Botanical Pendants">🌸 Botanical Pendants (2)</button>
+    <button class="filter-pill" data-filter="Home Accents & Gifts">🎁 Home Accents & Gifts (6)</button>
+  </div>
+
+  <!-- Main Grid -->
+  <div class="container">
+    <div class="product-grid" id="productGrid"></div>
+  </div>
+
+  <!-- Product Modal -->
+  <div class="modal-backdrop" id="modalBackdrop">
+    <div class="modal-box">
+      <div class="modal-header">
+        <div class="modal-header-left">
+          <span class="badge-sku" id="modalSku">SKU</span>
+          <h2 id="modalHeaderTitle">Product Details</h2>
+        </div>
+        <button class="close-btn" id="modalCloseBtn">&times;</button>
+      </div>
+
+      <div class="modal-body">
+        <!-- Left: Image Gallery -->
+        <div class="gallery-panel">
+          <div class="main-img-box">
+            <img id="modalMainImg" src="" alt="Product View">
+          </div>
+          <div class="thumbnails-strip" id="modalThumbStrip"></div>
+        </div>
+
+        <!-- Right: Information & Copy Panels -->
+        <div class="details-panel" id="modalDetails">
+          
+          <!-- Title Box -->
+          <div class="detail-section">
+            <div class="section-header">
+              <h4>🏷️ Product Title</h4>
+              <button class="btn btn-copy" onclick="copyCurrentField('title')">📋 Copy Title</button>
+            </div>
+            <p id="modalFullTitle" style="font-weight: 600; font-size: 14.5px; line-height: 1.5; color: #FFF;"></p>
+          </div>
+
+          <!-- Tax Info Box -->
+          <div class="detail-section">
+            <div class="section-header">
+              <h4>🏛️ HSN Code & GST Details</h4>
+              <button class="btn btn-copy" onclick="copyCurrentField('tax')">📋 Copy Tax Info</button>
+            </div>
+            <div class="tax-grid">
+              <div class="tax-card">
+                <div class="tax-label">HSN Code</div>
+                <div class="tax-val" id="modalHsn"></div>
+              </div>
+              <div class="tax-card green">
+                <div class="tax-label">GST Rate</div>
+                <div class="tax-val" id="modalGst"></div>
+              </div>
+            </div>
+            <p id="modalTaxDesc" style="font-size: 12px; color: var(--text-muted);"></p>
+          </div>
+
+          <!-- Short Description -->
+          <div class="detail-section">
+            <div class="section-header">
+              <h4>📝 Short Description</h4>
+              <button class="btn btn-copy" onclick="copyCurrentField('short_desc')">📋 Copy Short Desc</button>
+            </div>
+            <p id="modalShortDesc" style="font-size: 13px; line-height: 1.6; color: #E2E8F0; font-style: italic;"></p>
+          </div>
+
+          <!-- Detailed Description -->
+          <div class="detail-section">
+            <div class="section-header">
+              <h4>📄 Detailed Description</h4>
+              <button class="btn btn-copy" onclick="copyCurrentField('detailed_desc')">📋 Copy Detailed Desc</button>
+            </div>
+            <div id="modalDetailedDesc" style="font-size: 13px; line-height: 1.6; color: #CBD5E1; display: flex; flex-direction: column; gap: 8px;"></div>
+          </div>
+
+          <!-- Key Highlights Bullets -->
+          <div class="detail-section">
+            <div class="section-header">
+              <h4>✨ Key Features (Bullet Points)</h4>
+              <button class="btn btn-copy" onclick="copyCurrentField('bullets')">📋 Copy Bullets</button>
+            </div>
+            <ul class="bullets-list" id="modalBullets"></ul>
+          </div>
+
+          <!-- Specifications Table -->
+          <div class="detail-section">
+            <div class="section-header">
+              <h4>⚙️ Specifications & Details</h4>
+              <button class="btn btn-copy" onclick="copyCurrentField('specs')">📋 Copy Specs Table</button>
+            </div>
+            <table class="specs-table" id="modalSpecs"></table>
+          </div>
+
+          <!-- Care & SEO Tags -->
+          <div class="detail-section">
+            <div class="section-header">
+              <h4>🔍 SEO Keywords</h4>
+              <button class="btn btn-copy" onclick="copyCurrentField('keywords')">📋 Copy Keywords</button>
+            </div>
+            <p id="modalKeywords" style="font-size: 12px; color: #94A3B8; word-break: break-word;"></p>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Footer Bar -->
+      <div class="modal-footer">
+        <a id="modalDocxLink" href="#" class="btn btn-secondary" download>
+          📄 Open Word File (<span id="modalDocxName"></span>)
+        </a>
+        <button class="btn btn-primary" onclick="copyCurrentField('all')">
+          📋 Copy Entire Listing Packet (1-Click Paste)
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Notification -->
+  <div class="toast" id="toast">
+    <span>✓</span> <span id="toastMsg">Copied to clipboard!</span>
+  </div>
+
+  <!-- Load External Dataset -->
+  <script src="products_data.js"></script>
+
+  <!-- Application Logic -->
+  <script>
+    const productsData = window.productsData || [];
+    let currentFilter = 'all';
+    let currentSearch = '';
+    let activeProduct = null;
+
+    // Toast helper
+    function showToast(msg) {
+      const toast = document.getElementById('toast');
+      document.getElementById('toastMsg').innerText = msg;
+      toast.classList.add('show');
+      setTimeout(() => {
+        toast.classList.remove('show');
+      }, 2600);
+    }
+
+    function copyText(text, msg) {
+      if (!msg) msg = 'Copied to clipboard!';
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(text).then(() => {
+          showToast(msg);
+        }).catch(() => {
+          fallbackCopy(text, msg);
+        });
+      } else {
+        fallbackCopy(text, msg);
+      }
+    }
+
+    function fallbackCopy(text, msg) {
+      const ta = document.createElement('textarea');
+      ta.value = text;
+      document.body.appendChild(ta);
+      ta.select();
+      try {
+        document.execCommand('copy');
+        showToast(msg);
+      } catch (err) {
+        alert('Could not auto-copy, please copy manually.');
+      }
+      document.body.removeChild(ta);
+    }
+
+    // Render Product Cards
+    function renderProducts() {
+      const grid = document.getElementById('productGrid');
+      grid.innerHTML = '';
+
+      const filtered = productsData.filter(p => {
+        const matchesFilter = currentFilter === 'all' || p.group === currentFilter;
+        const q = currentSearch.toLowerCase();
+        const matchesSearch = !q || 
+          p.sku.toLowerCase().includes(q) ||
+          p.title.toLowerCase().includes(q) ||
+          p.category.toLowerCase().includes(q) ||
+          p.keywords.toLowerCase().includes(q) ||
+          p.hsn_code.toLowerCase().includes(q);
+        return matchesFilter && matchesSearch;
+      });
+
+      document.getElementById('productCountBadge').innerText = filtered.length + ' Products';
+
+      if (filtered.length === 0) {
+        grid.innerHTML = '<div style="grid-column: 1/-1; text-align: center; padding: 60px 20px; color: #94A3B8;"><h3>No products match your search</h3><p style="margin-top: 8px;">Try clearing search or choosing another category</p></div>';
+        return;
+      }
+
+      filtered.forEach(p => {
+        const card = document.createElement('div');
+        card.className = 'product-card';
+        const coverImg = p.images && p.images.length > 0 ? encodeURI(p.images[0]) : '';
+        const imgCount = p.images ? p.images.length : 0;
+
+        card.innerHTML = `
+          <div class="card-img-wrap" onclick="openModal('${p.sku}')">
+            <img class="card-img" src="${coverImg}" alt="${p.sku}" loading="lazy" onerror="this.src='https://via.placeholder.com/400x400/0f172a/94a3b8?text=${p.sku}'">
+            <div class="card-badges">
+              <span class="badge-sku">${p.sku}</span>
+              <span class="badge-gst">${p.gst_rate} GST</span>
+            </div>
+            <div class="badge-photos">📷 ${imgCount} Photos</div>
+          </div>
+          <div class="card-content">
+            <div class="card-category">${p.group}</div>
+            <div class="card-title" title="${p.title}">${p.title}</div>
+            <div class="card-tax-row">
+              <span>HSN: <b>${p.hsn_code}</b></span>
+              <span>Rate: <b>${p.gst_rate}</b></span>
+            </div>
+            <div class="card-actions">
+              <button class="btn btn-primary" onclick="openModal('${p.sku}')">
+                👁️ View Details & Photos
+              </button>
+              <button class="btn btn-copy" onclick="copyCardTitle('${p.sku}', event)" title="Copy Title">
+                📋 Title
+              </button>
+            </div>
+          </div>
+        `;
+        grid.appendChild(card);
+      });
+    }
+
+    function copyCardTitle(sku, event) {
+      event.stopPropagation();
+      const p = productsData.find(x => x.sku === sku);
+      if (p) {
+        copyText(p.title, '✓ Copied Title for ' + sku + '!');
+      }
+    }
+
+    // Modal Control
+    function openModal(sku) {
+      const p = productsData.find(x => x.sku === sku);
+      if (!p) return;
+      activeProduct = p;
+
+      document.getElementById('modalSku').innerText = p.sku;
+      document.getElementById('modalHeaderTitle').innerText = p.sku + ' - ' + p.group;
+      document.getElementById('modalFullTitle').innerText = p.title;
+      document.getElementById('modalHsn').innerText = p.hsn_code;
+      document.getElementById('modalGst').innerText = p.gst_rate;
+      document.getElementById('modalTaxDesc').innerText = p.tariff_description + ' | ' + p.tax_breakdown;
+      document.getElementById('modalShortDesc').innerText = p.short_desc;
+      
+      // Detailed description paragraphs
+      const ddContainer = document.getElementById('modalDetailedDesc');
+      ddContainer.innerHTML = '';
+      p.detailed_desc.forEach(para => {
+        const pElem = document.createElement('p');
+        pElem.innerText = para;
+        ddContainer.appendChild(pElem);
+      });
+
+      // Bullets
+      const bulletsList = document.getElementById('modalBullets');
+      bulletsList.innerHTML = '';
+      p.bullet_points.forEach(([heading, text]) => {
+        const li = document.createElement('li');
+        li.innerHTML = `<b>${heading}:</b> ${text}`;
+        bulletsList.appendChild(li);
+      });
+
+      // Specs Table
+      const specsTable = document.getElementById('modalSpecs');
+      specsTable.innerHTML = '';
+      Object.entries(p.specs).forEach(([k, v]) => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `<td>${k}</td><td>${v}</td>`;
+        specsTable.appendChild(tr);
+      });
+
+      // Keywords
+      document.getElementById('modalKeywords').innerText = p.keywords;
+
+      // Docx Link
+      const docxLink = document.getElementById('modalDocxLink');
+      docxLink.href = encodeURI(p.docx_file);
+      document.getElementById('modalDocxName').innerText = p.docx_file.split('/')[1];
+
+      // Gallery Images
+      const mainImg = document.getElementById('modalMainImg');
+      const thumbStrip = document.getElementById('modalThumbStrip');
+      thumbStrip.innerHTML = '';
+
+      if (p.images && p.images.length > 0) {
+        mainImg.src = encodeURI(p.images[0]);
+
+        p.images.forEach((imgFile, idx) => {
+          const thumbBtn = document.createElement('button');
+          thumbBtn.className = 'thumb-btn ' + (idx === 0 ? 'active' : '');
+          thumbBtn.innerHTML = `<img src="${encodeURI(imgFile)}" alt="Thumb ${idx + 1}">`;
+          thumbBtn.onclick = () => {
+            mainImg.src = encodeURI(imgFile);
+            thumbStrip.querySelectorAll('.thumb-btn').forEach(b => b.classList.remove('active'));
+            thumbBtn.classList.add('active');
+          };
+          thumbStrip.appendChild(thumbBtn);
+        });
+      }
+
+      document.getElementById('modalBackdrop').classList.add('active');
+    }
+
+    function closeModal() {
+      document.getElementById('modalBackdrop').classList.remove('active');
+    }
+
+    document.getElementById('modalCloseBtn').onclick = closeModal;
+    document.getElementById('modalBackdrop').onclick = (e) => {
+      if (e.target === document.getElementById('modalBackdrop')) closeModal();
+    };
+
+    // Copy Individual Fields
+    function copyCurrentField(type) {
+      if (!activeProduct) return;
+      const p = activeProduct;
+
+      if (type === 'title') {
+        copyText(p.title, '✓ Title copied!');
+      } else if (type === 'tax') {
+        const txt = [
+          'HSN CODE: ' + p.hsn_code,
+          'GST RATE: ' + p.gst_rate,
+          p.tariff_description,
+          p.tax_breakdown
+        ].join('\n');
+        copyText(txt, '✓ HSN & GST details copied!');
+      } else if (type === 'short_desc') {
+        copyText(p.short_desc, '✓ Short description copied!');
+      } else if (type === 'detailed_desc') {
+        copyText(p.detailed_desc.join('\n\n'), '✓ Detailed description copied!');
+      } else if (type === 'bullets') {
+        const bText = p.bullet_points.map(([h, t]) => '• ' + h + ': ' + t).join('\n');
+        copyText(bText, '✓ Bullet points copied!');
+      } else if (type === 'specs') {
+        const sText = Object.entries(p.specs).map(([k, v]) => k + ': ' + v).join('\n');
+        copyText(sText, '✓ Specifications table copied!');
+      } else if (type === 'keywords') {
+        copyText(p.keywords, '✓ Search keywords copied!');
+      } else if (type === 'all') {
+        const bText = p.bullet_points.map(([h, t]) => '• ' + h + ': ' + t).join('\n');
+        const sText = Object.entries(p.specs).map(([k, v]) => k + ': ' + v).join('\n');
+        const fullPacket = [
+          '=== PRODUCT DETAILS: ' + p.sku + ' ===',
+          'TITLE:\n' + p.title,
+          'HSN CODE: ' + p.hsn_code,
+          'GST RATE: ' + p.gst_rate,
+          'SHORT DESCRIPTION:\n' + p.short_desc,
+          'DETAILED DESCRIPTION:\n' + p.detailed_desc.join('\n\n'),
+          'KEY BULLET POINTS:\n' + bText,
+          'TECHNICAL SPECIFICATIONS:\n' + sText,
+          'SEARCH KEYWORDS:\n' + p.keywords
+        ].join('\n\n');
+        copyText(fullPacket, '✓ Complete listing for ' + p.sku + ' copied! Ready to paste.');
+      }
+    }
+
+    // Filter Buttons
+    document.querySelectorAll('.filter-pill').forEach(btn => {
+      btn.onclick = () => {
+        document.querySelectorAll('.filter-pill').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        currentFilter = btn.dataset.filter;
+        renderProducts();
+      };
+    });
+
+    // Search Input
+    document.getElementById('searchInput').oninput = (e) => {
+      currentSearch = e.target.value;
+      renderProducts();
+    };
+
+    // Keyboard ESC to close modal
+    window.onkeydown = (e) => {
+      if (e.key === 'Escape') closeModal();
+    };
+
+    // Initial render
+    renderProducts();
+  </script>
+</body>
+</html>
